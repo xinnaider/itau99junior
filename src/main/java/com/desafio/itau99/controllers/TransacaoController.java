@@ -1,18 +1,24 @@
 package com.desafio.itau99.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.desafio.itau99.dtos.TransacaoCreateDTO;
+import com.desafio.itau99.entities.TransacaoEntity;
+import com.desafio.itau99.services.TransacaoService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.DoubleSummaryStatistics;
 
 @RestController
 public class TransacaoController  {
+    TransacaoService transacaoService;
+
     @PostMapping("/transacao")
-    public void transacao() {
-        System.out.println("Transacao realizada com sucesso!");
+    public TransacaoEntity create(@RequestBody @Valid TransacaoCreateDTO transacao) {
+        return transacaoService.create(transacao);
     }
 
-    @GetMapping("/transacao/estatistica")
-    public void estatistica() {
-        System.out.println("Estatistica realizada com sucesso!");
+    @GetMapping("/transacao/estatistica/{lastSeconds}")
+    public DoubleSummaryStatistics estatistica(@PathVariable Long lastSeconds) {
+        return transacaoService.estatistica(lastSeconds);
     }
 }

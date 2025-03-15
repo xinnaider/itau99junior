@@ -1,5 +1,6 @@
 package com.desafio.itau99.repositories;
 
+import com.desafio.itau99.dtos.TransacaoCreateDTO;
 import com.desafio.itau99.entities.TransacaoEntity;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +10,14 @@ import java.util.function.Function;
 
 @Component
 public class TransacaoRepository {
-    private List<TransacaoEntity> transacoes = new ArrayList<>();
+        private final List<TransacaoEntity> transacoes = new ArrayList<>();
 
-    public void save(TransacaoEntity transacao) {
-        transacoes.add(transacao);
+    public TransacaoEntity save(TransacaoCreateDTO transacao) {
+        TransacaoEntity transacaoEntity = new TransacaoEntity(transacao.getValor(), transacao.getDataHora());
+
+        transacoes.add(transacaoEntity);
+
+        return transacaoEntity;
     }
 
     public void deleteAll() {
