@@ -2,6 +2,7 @@ package com.desafio.itau99.repositories;
 
 import com.desafio.itau99.dtos.TransacaoCreateDTO;
 import com.desafio.itau99.entities.TransacaoEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,15 +10,14 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class TransacaoRepository {
-        private final List<TransacaoEntity> transacoes = new ArrayList<>();
+    private final List<TransacaoEntity> transacoes = new ArrayList<>();
 
-    public TransacaoEntity save(TransacaoCreateDTO transacao) {
+    public void save(TransacaoCreateDTO transacao) {
         TransacaoEntity transacaoEntity = new TransacaoEntity(transacao.getValor(), transacao.getDataHora());
 
         transacoes.add(transacaoEntity);
-
-        return transacaoEntity;
     }
 
     public void deleteAll() {
@@ -25,14 +25,10 @@ public class TransacaoRepository {
     }
 
     public List<TransacaoEntity> where(Function<TransacaoEntity, Boolean> _callback) {
-        List<TransacaoEntity> transacoesFiltradas = new ArrayList<>();
+        return transacoes.stream().filter(_callback::apply).toList();
+    }
 
-        for (TransacaoEntity transacao : transacoes) {
-            if (_callback.apply(transacao)) {
-                transacoesFiltradas.add(transacao);
-            }
-        }
-
-        return transacoesFiltradas;
+    public List<TransacaoEntity> get() {
+        return transacoes;
     }
 }

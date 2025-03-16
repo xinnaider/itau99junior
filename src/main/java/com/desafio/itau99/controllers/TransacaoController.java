@@ -1,24 +1,40 @@
 package com.desafio.itau99.controllers;
 
 import com.desafio.itau99.dtos.TransacaoCreateDTO;
-import com.desafio.itau99.entities.TransacaoEntity;
+import com.desafio.itau99.dtos.TransacaoEstatisticaDTO;
 import com.desafio.itau99.services.TransacaoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.DoubleSummaryStatistics;
-
 @RestController
+@RequestMapping("/transacao")
+@Tag(name = "Transação", description = "Endpoints para criação e consulta de transações")
+@RequiredArgsConstructor
 public class TransacaoController  {
-    TransacaoService transacaoService;
+    private final TransacaoService transacaoService;
 
-    @PostMapping("/transacao")
-    public TransacaoEntity create(@RequestBody @Valid TransacaoCreateDTO transacao) {
-        return transacaoService.create(transacao);
+    @PostMapping()
+    public ResponseEntity<Object> create(@RequestBody @Valid TransacaoCreateDTO transacao) {
+        transacaoService.create(transacao);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/transacao/estatistica/{lastSeconds}")
-    public DoubleSummaryStatistics estatistica(@PathVariable Long lastSeconds) {
-        return transacaoService.estatistica(lastSeconds);
+    @GetMapping("/estatistica")
+    public ResponseEntity<TransacaoEstatisticaDTO> estatistica(@RequestParam(required = false) Long lastSeconds) {
+        TransacaoEstatisticaDTO estatistica = transacaoService.estatistica(lastSeconds);
+
+        return ResponseEntity.status(HttpStatus.OK).body(estatistica);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Object>  deleteAll() {
+        transacaoService.deleteAll();
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
